@@ -39,7 +39,7 @@ def wall_filter(gray, kernel=3, opening_iter=3, dilate_iter=3):
     return unknown
 
 
-def detectPreciseBoxes(detect_img, output_img=None, color=[100, 100, 0]):
+def detectPreciseBoxes(detect_img, output_img=None, color=[100, 100, 0], approx_accuracy=0.001):
     """
     Detect corners with boxes in image with high precision
     @Param detect_img image to detect from @mandatory
@@ -58,7 +58,7 @@ def detectPreciseBoxes(detect_img, output_img=None, color=[100, 100, 0]):
         largest_contour_area = cv2.contourArea(cnt)
         largest_contour = cnt
 
-        epsilon = 0.001 * cv2.arcLength(largest_contour, True)
+        epsilon = approx_accuracy * cv2.arcLength(largest_contour, True)
         approx = cv2.approxPolyDP(largest_contour, epsilon, True)
         if output_img is not None:
             final = cv2.drawContours(output_img, [approx], 0, color)

@@ -1,25 +1,31 @@
 '''
-    Generate wall data file for floorplan
+    Generate wall data for floorplan
     @Param img_path, path to input file
-    @Param info, boolean if data should be printed
-    @Return shape
-    '''
-import imutils as imutils
+    @Param kernel, size of square kernel for morphological operations, e.g. kernel = 3 means kernel is (3, 3)
+    @Param opening_iter, number of iterations of opening operation for wall filter
+    @Param dilate_iter, number of iterations of dilate operation for wall filter
+    @Param approx_accuracy, maximum distance from contour to approximated contour
+    @Return list of walls in format ((start_x, start_y), (end_x, end_y))
+'''
 
 from utils.detect import *
 from utils.transform import *
+import argparse
+import imutils
 import cv2
 import numpy as np
 
+parser = argparse.ArgumentParser(description='Optional app description')
 
-def detect_walls(img_path: str, kernel=3, opening_iter=3, dilate_iter=3):
+
+def detect_walls(img_path: str, kernel=3, opening_iter=3, dilate_iter=3, approx_accuracy=0.001):
     img = cv2.imread(img_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # create wall image (filter out small objects from image)
     wall_img = wall_filter(gray, kernel, opening_iter, dilate_iter)
     # detect walls
-    boxes, img = detectPreciseBoxes(wall_img, wall_img)
+    boxes, img = detectPreciseBoxes(wall_img, wall_img, approx_accuracy)
     cv2.imwrite('walls.jpg', imutils.resize(wall_img, width=1280))
     # create verts (points 3d), points to use in mesh creations
     verts = []
@@ -53,4 +59,16 @@ def detect_walls(img_path: str, kernel=3, opening_iter=3, dilate_iter=3):
     return walls_plan_for_xml_generator
 
 
-detect_walls('example.png', kernel=2, opening_iter=3, dilate_iter=2)
+parser.add_argument('img_path', type=str, help='Image path')
+parser.add_argument('--kernel', type=int, help='size of square kernel for morphological operations')
+parser.add_argument('--opening_iter', type=int, help='number of iterations of opening operation for wall filter')
+parser.add_argument('--dilate_iter', type=int, help='number of iterations of dilate operation for wall filter')
+parser.add_argument('--approx_accuracy', type=int, help='maximum distance from contour to approximated contour')
+
+args = parser.parse_args()
+
+detect_walls(args.img_path,
+             kernel=args.kernel if args.kernel else 2,
+             opening_iter=args.opening_iter if args.opening_iter else 3,
+             dilate_iter=args.dilate_iter if args.dilate_iter else 3,
+             approx_accuracy=args.approx_accuracy if args.approx_accuracy else 1)
