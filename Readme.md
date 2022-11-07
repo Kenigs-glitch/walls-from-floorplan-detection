@@ -1,4 +1,6 @@
 Extraction and fine-tuning walls detection part from https://github.com/rbg-research/Floor-Plan-Detection
+Module using morphological transformations and distance transformation to filter walls from the image.
+After that, approximation of a shape of contour to another shape consisting of a lesser number of vertices is used on contour in order to represent walls as vectors.
 
 ### Installation
 ```
