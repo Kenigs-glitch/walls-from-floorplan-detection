@@ -63,7 +63,7 @@ parser.add_argument('img_path', type=str, help='Image path')
 parser.add_argument('--kernel', type=int, help='size of square kernel for morphological operations')
 parser.add_argument('--opening_iter', type=int, help='number of iterations of opening operation for wall filter')
 parser.add_argument('--dilate_iter', type=int, help='number of iterations of dilate operation for wall filter')
-parser.add_argument('--approx_accuracy', type=int, help='maximum distance from contour to approximated contour')
+parser.add_argument('--approx_accuracy', type=float, help='maximum distance from contour to approximated contour')
 
 args = parser.parse_args()
 
